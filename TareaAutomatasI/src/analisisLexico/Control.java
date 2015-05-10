@@ -1,6 +1,7 @@
-package analisisLexico;
+package javaapplication1;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -11,10 +12,14 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Scanner;
 
 public class Control {
-	
-	//private int[][] resultados;
+	private static int indice = 0;
+        
+	private int[][] resultados;
+        private int[] resultadoA;
+        private String[] nombres;
 	private String dir;
 	private Scanner scanner;
+        private AnalizadorL analizador;
 	
 	Control(){
 		scanner = new Scanner(System.in);
@@ -29,20 +34,42 @@ public class Control {
 			dir = scanner.next();
 			file = new File(dir);
 			if(file.exists()){
-				salir = true;
+				int len = file.listFiles().length;
+                                resultados = new int[len][10];
+                                nombres = new String[len]; 
+                                salir = true;
+                                
 			}
 			else{
 				System.out.println("Problema de path,digite de nuevo");
 			}
 		}
 	}
+        
+        void analisis(File file) throws FileNotFoundException, IOException{
+            
+            AnalizadorL analizador = new AnalizadorL( new java.io.FileReader(file) );
+            resultadoA = analizador.analyze();
+            System.out.print("Nombre de Archivo "+ nombres[indice]+ " ");
+            for(int i=0;i<10;i++){
+                 System.out.print(resultadoA[i]);
+             }
+            System.out.println("");
+             
+        }
 			
 	void revisarArchivos(){
-		try {
-			Files.walkFileTree(Paths.get(dir), new SimpleFileVisitor<Path>() {
+            
+	    try {
+                        Files.walkFileTree(Paths.get(dir), new SimpleFileVisitor<Path>() {
 			    @Override
 			    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 			        System.out.println("file: " + file);
+                                File archivo = new File(file.toString());
+                                nombres[indice] = archivo.getName();
+                                analisis(archivo);
+                                indice++;
+                                
 			        return FileVisitResult.CONTINUE;
 			    }
 			});
@@ -54,8 +81,7 @@ public class Control {
 	
 	
 	public static void main(String[] args){
-		System.out.println("Hello World");
-		Control c = new Control();
+	        Control c = new Control();
 		c.setDirectorio();
 		c.revisarArchivos();
 	}
