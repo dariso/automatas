@@ -1,6 +1,5 @@
 package analisisLexico;
 
-import java.io.File;
 import java.io.IOException;
 
 @SuppressWarnings({"unused"})
