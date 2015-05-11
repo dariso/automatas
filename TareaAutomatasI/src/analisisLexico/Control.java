@@ -1,4 +1,4 @@
-package javaapplication1;
+package analisisLexico;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,11 +15,11 @@ public class Control {
 	private static int indice = 0;
         
 	private int[][] resultados;
-        private int[] resultadoA;
-        private String[] nombres;
+    private int[] resultadoA;
+    private String[] nombres;
 	private String dir;
 	private Scanner scanner;
-        private AnalizadorL analizador;
+    private AnalizadorLexico analizador;
 	
 	Control(){
 		scanner = new Scanner(System.in);
@@ -35,9 +35,10 @@ public class Control {
 			file = new File(dir);
 			if(file.exists()){
 				int len = file.listFiles().length;
-                                resultados = new int[len][10];
-                                nombres = new String[len]; 
-                                salir = true;
+                //12 componentes Lexicos
+				resultados = new int[len][12];
+                nombres = new String[len]; 
+                salir = true;
                                 
 			}
 			else{
@@ -51,7 +52,7 @@ public class Control {
             AnalizadorL analizador = new AnalizadorL( new java.io.FileReader(file) );
             resultadoA = analizador.analyze();
             System.out.print("Nombre de Archivo "+ nombres[indice]+ " ");
-            for(int i=0;i<10;i++){
+            for(int i=0;i<12;i++){
                  System.out.print(resultadoA[i]);
              }
             System.out.println("");
