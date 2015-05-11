@@ -3,6 +3,7 @@ package analisisLexico;
 import java.io.File;
 import java.io.IOException;
 
+@SuppressWarnings({"unused"})
 public class AnalizadorL implements AnalizadorLexico {
 
   /** This character denotes the end of file */
