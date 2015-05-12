@@ -1,3 +1,11 @@
+/*
+ * Tarea I Automatas
+ * Daniel Rivera Solano A85274
+ *
+ * */
+
+
+
 package analisisLexico;
 
 import java.io.File;
@@ -13,16 +21,15 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Scanner;
 
 public class Control {
-	private static int indice = 0;
-        
-	private int[][] resultados;
-    private int[] resultadoA;
-    private String[] nombres;
-    private String[] compLex;
+	private int indice = 0;
+    private int[][] resultados;
+    private int[] resultadoAnalisis;
+    private String[] nombresArchivos;
+    private String[] nombresCompLexicos;
     private String dir;
 	private Scanner scanner;
-    private AnalizadorLexico analizador;
     private AnLexFactory fabricaAnalizaLexicos;
+    private AnalizadorLexico analizador;
 	
 	Control(AnLexFactory fabricaAL){
 		scanner = new Scanner(System.in);
@@ -31,30 +38,33 @@ public class Control {
 	}
 	
 	private void analisis(File file) throws FileNotFoundException, IOException{
-        
+		
 		   analizador = fabricaAnalizaLexicos.getAnalizadorLexico(file);
-		   resultadoA = analizador.analyze();
-	       System.out.print("Nombre de Archivo "+ nombres[indice]+ " ");
-	       for(int i=0;i<12;i++){
-	    	   System.out.print(resultadoA[i]);
-	    	   resultados[indice][i] = resultadoA[i];
+		   if(resultados == null){
+			   resultados = new int [nombresArchivos.length][analizador.getNombreCompLexicos().length];
+		   }
+		   if(nombresCompLexicos == null){
+			   nombresCompLexicos = analizador.getNombreCompLexicos();
+		   }
+		   resultadoAnalisis = analizador.analyze();
+	       for(int i=0;i<analizador.getNombreCompLexicos().length;i++){
+	    	   resultados[indice][i] = resultadoAnalisis[i];
 	       }
-	      System.out.println("");
+	      
     }
 	
 	public void printResultados(){
-		compLex = analizador.getNombreCompLexicos();
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter("Resultados.txt");
 			writer.print("          ");
-			for(String componente : compLex){
+			for(String componente : nombresCompLexicos){
 				writer.print(componente + "     ");
 			}
 			writer.println();
-			for(int i=0;i<nombres.length;i++){
-				writer.print(nombres[i]+"	  ");
-				for(int j=0;j<12;j++){
+			for(int i=0;i<nombresArchivos.length;i++){
+				writer.print(nombresArchivos[i]+"	  ");
+				for(int j=0;j<nombresCompLexicos.length;j++){
 					writer.print(resultados[i][j] + "          ");
 				}
 				writer.println("\n");
@@ -71,20 +81,19 @@ public class Control {
 	public void setDirectorio(){
 		boolean salir = false;
 		File file;
-		System.out.println("Digite el path del Directorio");
+		System.out.println("Digite la Direccion del Directorio a Analizar");
 		while(!salir){
 			dir = scanner.next();
 			file = new File(dir);
 			if(file.exists()){
 				int len = file.listFiles().length;
                 //12 componentes Lexicos
-				resultados = new int[len][12];
-                nombres = new String[len]; 
+			    nombresArchivos = new String[len]; 
                 salir = true;
                                 
 			}
 			else{
-				System.out.println("Problema de path,digite de nuevo");
+				System.out.println("Direccion Invalida,Digitela De Nuevo");
 			}
 		}
 	}
@@ -97,9 +106,8 @@ public class Control {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) 
 					throws IOException {
-				System.out.println("file: " + file);
-                File archivo = new File(file.toString());
-                nombres[indice] = archivo.getName();
+				File archivo = new File(file.toString());
+                nombresArchivos[indice] = archivo.getName();
                 analisis(archivo);
                 indice++;
                 return FileVisitResult.CONTINUE;
@@ -118,5 +126,7 @@ public class Control {
 		c.setDirectorio();
 		c.revisarArchivos();
 		c.printResultados();
+		System.out.println("Analisis Finalizado, Resultados guardados en archivo Resultados.txt\n"
+				+ "creado en la misma carpeta del ejectutable.");
 	}
 }
